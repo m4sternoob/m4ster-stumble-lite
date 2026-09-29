@@ -1,8 +1,11 @@
 # Stumble Lite
 
+
 A low-poly 3D knock-your-friends-off-the-platform game for iPhone. Built with Swift and SceneKit. Characters, arena, and obstacles are all SceneKit primitives — no 3D model files required.
 
 Single-player works now. Local multiplayer over Multipeer Connectivity is next.
+
+![Stumble Lite gameplay](screenshot.png)
 
 ## Requirements
 
