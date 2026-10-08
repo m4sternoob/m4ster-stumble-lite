@@ -114,7 +114,6 @@ final class Player3D: SCNNode {
             | PhysicsCategory.obstacle
             | PhysicsCategory.player
         body.contactTestBitMask = PhysicsCategory.killZone
-            | PhysicsCategory.player   // for player-player contact boosts
 
         self.physicsBody = body
     }
@@ -145,14 +144,4 @@ final class Player3D: SCNNode {
         }
     }
 
-    /// Reset position and velocity — used when a round restarts.
-    func reset(to position: SCNVector3) {
-        physicsBody?.velocity = SCNVector3Zero
-        physicsBody?.angularVelocity = SCNVector4Zero
-        self.position = position
-        self.eulerAngles = SCNVector3Zero
-        isEliminated = false
-        opacity = 1.0
-        removeAllActions()
-    }
 }
