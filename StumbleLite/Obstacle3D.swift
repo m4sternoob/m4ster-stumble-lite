@@ -35,9 +35,7 @@ final class Obstacle3D: SCNNode {
     let kind: Kind
     private let origin: SCNVector3
     private var elapsed: TimeInterval = 0
-
-    // TUNING
-    private static let dt: TimeInterval = 1.0 / 60.0
+    private var lastTime: TimeInterval = -1
 
     init(kind: Kind, at origin: SCNVector3) {
         self.kind = kind
@@ -99,7 +97,16 @@ final class Obstacle3D: SCNNode {
     // MARK: Update
 
     func update(currentTime: TimeInterval) {
-        elapsed += Obstacle3D.dt
+        // Real frame delta, not a fixed 1/60 — obstacle speed stays
+        // correct on 120Hz displays and under frame drops.
+        let dt: TimeInterval
+        if lastTime < 0 {
+            dt = 1.0 / 60.0
+        } else {
+            dt = min(currentTime - lastTime, 0.1)
+        }
+        lastTime = currentTime
+        elapsed += dt
 
         switch kind {
         case .movingPlatform(_, let axis, let distance, let period):
@@ -117,23 +124,11 @@ final class Obstacle3D: SCNNode {
 
         case .spinningBar(_, _, let angularSpeed):
             // Apply rotation around Y (world-up) since we already
-            // rotated the bar onto its side.
-            let r = SCNVector4(0, 1, 0, -angularSpeed * Float(Obstacle3D.dt))
-            // SCNNode doesn't expose a simple "add rotation"; use
-            // eulerAngles as an accumulator for clarity.
+            // rotated the bar onto its side. SCNNode doesn't expose a
+            // simple "add rotation", so accumulate via eulerAngles.
             eulerAngles = SCNVector3(eulerAngles.x,
-                                     eulerAngles.y + angularSpeed * Float(Obstacle3D.dt),
+                                     eulerAngles.y + angularSpeed * Float(dt),
                                      eulerAngles.z)
-            _ = r  // silence unused warning while keeping the doc note
         }
-    }
-
-    func reset() {
-        position = origin
-        switch kind {
-        case .movingPlatform: eulerAngles = SCNVector3Zero
-        case .spinningBar:    eulerAngles = SCNVector3(0, 0, Float.pi / 2)
-        }
-        elapsed = 0
     }
 }

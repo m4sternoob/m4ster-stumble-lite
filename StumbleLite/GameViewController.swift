@@ -17,14 +17,13 @@ final class GameViewController: UIViewController {
     static let arenaSize: Float = 20
     static let wallThickness: Float = 0.6
     static let wallHeight: Float = 1.2
+    /// Width of the knock-out gap centered in each wall — this is how
+    /// players actually get eliminated into the kill zone.
+    static let wallGap: Float = 3.0
     static let killZoneY: Float = -8
     static let gravity: Float = -28
 
     static let roundSeconds: TimeInterval = 60
-
-    /// Pixels of drag that map to "full force". Beyond that, force
-    /// caps at 1.5x.
-    static let dragNormalizationPixels: CGFloat = 90
 
     // MARK: State
 
@@ -192,14 +191,23 @@ final class GameViewController: UIViewController {
         floor.physicsBody?.collisionBitMask = PhysicsCategory.player
         scene.rootNode.addChildNode(floor)
 
-        // ----- Walls -----
+        // ----- Walls (each with a centered knock-out gap) -----
         struct WallSpec { let pos: SCNVector3; let size: SCNVector3 }
-        let specs: [WallSpec] = [
-            WallSpec(pos: SCNVector3(-(size / 2 + t / 2), h / 2, 0), size: SCNVector3(t, h, size)),
-            WallSpec(pos: SCNVector3( (size / 2 + t / 2), h / 2, 0), size: SCNVector3(t, h, size)),
-            WallSpec(pos: SCNVector3(0, h / 2, -(size / 2 + t / 2)), size: SCNVector3(size, h, t)),
-            WallSpec(pos: SCNVector3(0, h / 2,  (size / 2 + t / 2)), size: SCNVector3(size, h, t))
-        ]
+        let gap = Self.wallGap
+        // Segment length, extended by one wall thickness so the
+        // segments overlap at the corners instead of leaving a notch.
+        let segLen = (size - gap) / 2 + t
+        let segOff = gap / 2 + segLen / 2 - t / 2  // segment center offset
+        var specs: [WallSpec] = []
+        for sign: Float in [-1, 1] {
+            let o = sign * segOff
+            // East/west walls run along Z.
+            specs.append(WallSpec(pos: SCNVector3(-(size / 2 + t / 2), h / 2, o), size: SCNVector3(t, h, segLen)))
+            specs.append(WallSpec(pos: SCNVector3( (size / 2 + t / 2), h / 2, o), size: SCNVector3(t, h, segLen)))
+            // North/south walls run along X.
+            specs.append(WallSpec(pos: SCNVector3(o, h / 2, -(size / 2 + t / 2)), size: SCNVector3(segLen, h, t)))
+            specs.append(WallSpec(pos: SCNVector3(o, h / 2,  (size / 2 + t / 2)), size: SCNVector3(segLen, h, t)))
+        }
         for s in specs {
             let wall = SCNNode(geometry: SCNBox(
                 width: CGFloat(s.size.x),
@@ -341,10 +349,11 @@ extension GameViewController: SCNSceneRendererDelegate {
             let mag = sqrt(joystickInput.dx * joystickInput.dx +
                            joystickInput.dy * joystickInput.dy)
             if mag > 0.05 {
-                // Screen dy up = move forward (negative Z in the scene,
-                // since the camera looks down +Z toward origin).
+                // Joystick dy is negative when dragging up (UIKit
+                // coordinates). The camera sits at +Z looking back at
+                // the origin, so up-screen is -Z: pass dy through as-is.
                 let nx = Float(joystickInput.dx)
-                let nz = Float(-joystickInput.dy)
+                let nz = Float(joystickInput.dy)
                 let len = sqrt(nx * nx + nz * nz)
                 if len > 0.001 {
                     let ux = nx / len
@@ -398,6 +407,10 @@ extension GameViewController: SCNPhysicsContactDelegate {
     fileprivate func eliminate(_ node: SCNNode) {
         guard let player = node as? Player3D, !player.isEliminated else { return }
         player.isEliminated = true
+        // Stop interacting with the world immediately — the node still
+        // fades out for 0.5s and a "dead" body shouldn't shove anyone.
+        player.physicsBody?.collisionBitMask = 0
+        player.physicsBody?.contactTestBitMask = 0
         let fade = SCNAction.sequence([
             SCNAction.fadeOut(duration: 0.5),
             SCNAction.removeFromParentNode()
