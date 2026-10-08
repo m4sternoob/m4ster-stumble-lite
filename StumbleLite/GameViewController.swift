@@ -33,6 +33,7 @@ final class GameViewController: UIViewController {
     private var players: [Player3D] = []
     private var obstacles: [Obstacle3D] = []
     private var localPlayer: Player3D?
+    private var botBrains: [Player3D: BotBrain] = [:]
     private var startedAt: TimeInterval = 0
     private var ended = false
 
@@ -296,7 +297,12 @@ final class GameViewController: UIViewController {
             player.position = pos
             scene.rootNode.addChildNode(player)
             players.append(player)
-            if i == 0 { localPlayer = player }
+            if i == 0 {
+                localPlayer = player
+            } else {
+                // Everyone else is AI-driven.
+                botBrains[player] = BotBrain()
+            }
         }
     }
 
@@ -353,6 +359,15 @@ extension GameViewController: SCNSceneRendererDelegate {
                                       scale: Float(min(mag, 1.0)))
                 }
             }
+        }
+
+        // Bot AI: steer every non-local, still-alive player.
+        let opponents = players.filter { !$0.isEliminated }
+        for (bot, brain) in botBrains where !bot.isEliminated {
+            brain.update(bot: bot,
+                         opponents: opponents,
+                         arenaHalfSize: Self.arenaSize / 2,
+                         dt: 1.0 / 60.0)
         }
 
         // Cap horizontal speeds.

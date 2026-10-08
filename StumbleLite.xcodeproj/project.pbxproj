@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		846B9F8FC92ED99DAD2DDF5B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A35E13A2A3939396D58C8CDD /* AppDelegate.swift */; };
+		9DA5EF92870A99F740CA9E8E /* BotBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17D896E464128F187C6787D /* BotBrain.swift */; };
 		4EF470E9DFC4E91EF6B3980B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946AA4A6A913AEDF639F5F41 /* SceneDelegate.swift */; };
 		E487C65D2C93F1E0DBC75D0F /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CCD53E53DB90A37F51F9967 /* GameViewController.swift */; };
 		92E1080B8F41E648A56F6AD2 /* JoystickView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7CA8EE8EC732AE346F76DE5 /* JoystickView.swift */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 /* Begin PBXFileReference section */
 		A35E13A2A3939396D58C8CDD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		E17D896E464128F187C6787D /* BotBrain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotBrain.swift; sourceTree = "<group>"; };
 		946AA4A6A913AEDF639F5F41 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		8CCD53E53DB90A37F51F9967 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		B7CA8EE8EC732AE346F76DE5 /* JoystickView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoystickView.swift; sourceTree = "<group>"; };
@@ -52,6 +54,7 @@
 			isa = PBXGroup;
 			children = (
 				A35E13A2A3939396D58C8CDD /* AppDelegate.swift */,
+				E17D896E464128F187C6787D /* BotBrain.swift */,
 				946AA4A6A913AEDF639F5F41 /* SceneDelegate.swift */,
 				8CCD53E53DB90A37F51F9967 /* GameViewController.swift */,
 				B7CA8EE8EC732AE346F76DE5 /* JoystickView.swift */,
@@ -139,6 +142,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				846B9F8FC92ED99DAD2DDF5B /* AppDelegate.swift in Sources */,
+				9DA5EF92870A99F740CA9E8E /* BotBrain.swift in Sources */,
 				4EF470E9DFC4E91EF6B3980B /* SceneDelegate.swift in Sources */,
 				E487C65D2C93F1E0DBC75D0F /* GameViewController.swift in Sources */,
 				92E1080B8F41E648A56F6AD2 /* JoystickView.swift in Sources */,
