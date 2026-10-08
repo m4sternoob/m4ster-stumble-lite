@@ -19,6 +19,7 @@ DEPLOYMENT_TARGET = "16.0"
 
 SWIFT_FILES = [
     "AppDelegate.swift",
+    "BotBrain.swift",
     "SceneDelegate.swift",
     "GameViewController.swift",
     "JoystickView.swift",

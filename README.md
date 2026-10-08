@@ -24,7 +24,9 @@ First time on a device: unlock the phone, tap **Trust This Computer**, then sele
 ## How to play
 
 - Use the on-screen joystick to move **Red**.
-- Knock the other players off the platform before the timer runs out — or don’t get knocked off yourself.
+- **Blue**, **Green**, and **Yellow** are bots — they chase the nearest opponent and shove.
+- Knock the other players off the platform before the timer runs out — or don't get knocked off yourself.
+- Watch the spinning bars: they shove hard.
 - Landscape only.
 
 ## Layout
@@ -38,6 +40,7 @@ stumble-lite/
     ├── SceneDelegate.swift
     ├── Info.plist
     ├── GameViewController.swift   # scene, HUD, physics, round timer
+    ├── BotBrain.swift             # AI for the non-local players
     ├── JoystickView.swift         # on-screen stick
     ├── Player3D.swift             # capsule body + sphere head
     ├── Obstacle3D.swift           # moving platform, spinning bar
@@ -62,6 +65,13 @@ In `Player3D.swift`:
 - `linearDamping`, `angularDamping`
 - `inputForce`, `maxHorizontalSpeed`
 
+In `BotBrain.swift`:
+
+- `thinkInterval` — how often a bot re-picks its target
+- `aggression` — bot force relative to the player's
+- `edgeMargin` — how far inside the arena edge a bot turns back
+- `wanderRate` / `wanderAmount` — steering wobble so paths curve
+
 ## Optional: swap in a real model
 
 Drop a `.scn` / `.dae` file into the project, then in `Player3D.swift` replace `buildCharacter()` with:
@@ -82,6 +92,7 @@ Keep `configurePhysics()` as-is so the physics shape stays the same.
 - [x] Single-player 3D physics, obstacles, win condition
 - [x] SceneKit lighting, shadows, low-poly characters
 - [x] On-screen joystick
+- [x] Bot opponents with simple AI (chase, shove, edge awareness)
 - [ ] Multipeer Connectivity session (Bluetooth + Wi-Fi)
 - [ ] Host / Join screen
 - [ ] More maps
